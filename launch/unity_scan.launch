@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+ <!-- NODO PARA CORRECCCION DE TIMESTAMP DEL LASER-->
+ <node name="laser_correct" pkg="laser3d_scan" type="laser_correct.py" output="screen"/>
+ <!-- NODO PARA GENERACION DE TRANSFORMADAS-->
+ <node name="tf_publish" pkg="unity_odom" type="tf_publish.py" output="screen"/>
+ <!-- NODO PARA GENERACION DE NUBES DE PUNTOS-->
+ <!--node name="localpc_generator" pkg="laser3d_scan" type="localpc_generator.py" output="screen"/-->
+
+</launch>
