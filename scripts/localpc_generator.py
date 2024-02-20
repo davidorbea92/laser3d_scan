@@ -15,6 +15,7 @@ from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 
 scan_distance = 0.005  # Desplazamiento vertical para la generacion en metros
+distance_limit=3.0 #Distancia maxima para almacenamiento de nubes de puntos
 
 
 # Los angulos se consederan en radianes con 0 en el centro y a la derecha/izquierda positivos y negativos
@@ -71,15 +72,16 @@ class laser3d_reconstruction(object):
                 if (abs(self.last_scan_pos-trans[2])>=scan_distance):
                     if valid_ranges:
                         for i, distance in enumerate(valid_ranges):
-                            angle = angle_min + i * angle_increment
-                            point = Point32()
-                            orientation_list = [self.pose_base.orientation.x, self.pose_base.orientation.y,self.pose_base.orientation.z,self.pose_base.orientation.w]
-                            (roll, pitch, yaw) = euler_from_quaternion (orientation_list)
-                            point.x = self.pose_base.position.x+distance * math.cos(angle+yaw)
-                            point.y = self.pose_base.position.y+distance * math.sin(angle+yaw)
-                            point.z = -trans[2]
-                            self.accumulated_pc.points.append(point)
-                            self.list_pcd.append([point.x, point.y, point.z])
+                            if distance<=distance_limit:
+                                angle = angle_min + i * angle_increment
+                                point = Point32()
+                                orientation_list = [self.pose_base.orientation.x, self.pose_base.orientation.y,self.pose_base.orientation.z,self.pose_base.orientation.w]
+                                (roll, pitch, yaw) = euler_from_quaternion (orientation_list)
+                                point.x = self.pose_base.position.x+distance * math.cos(angle+yaw)
+                                point.y = self.pose_base.position.y+distance * math.sin(angle+yaw)
+                                point.z = -trans[2]
+                                self.accumulated_pc.points.append(point)
+                                self.list_pcd.append([point.x, point.y, point.z])
                         rospy.loginfo("scan_added")
                         self.last_scan_pos=trans[2]
                         channel = ChannelFloat32()
